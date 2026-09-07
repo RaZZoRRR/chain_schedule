@@ -1,0 +1,1060 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>CHAIN SCHEDULE</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: #0d1117;
+            color: #ffffff;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: min(1200px, 94%);
+            margin: 0 auto;
+            padding: 40px 0 60px;
+        }
+
+        /* HEADER */
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        h1 {
+            font-size: clamp(32px, 6vw, 56px);
+            letter-spacing: 3px;
+            margin-bottom: 12px;
+        }
+
+        .date {
+            font-size: 18px;
+            color: #aeb7c4;
+            margin-bottom: 6px;
+        }
+
+        .clock {
+            font-size: 26px;
+            font-weight: bold;
+            letter-spacing: 2px;
+        }
+
+        /* SCHEDULE */
+
+        .schedule {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 18px;
+        }
+
+        .column {
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 14px;
+            overflow: hidden;
+            min-height: 350px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .column-header {
+            background: #21262d;
+            padding: 20px 15px;
+            text-align: center;
+            font-size: 21px;
+            font-weight: bold;
+            letter-spacing: 1px;
+            border-bottom: 1px solid #30363d;
+        }
+
+        .entries {
+            padding: 15px;
+            flex: 1;
+        }
+
+        .entry {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 11px 8px;
+            margin-bottom: 7px;
+            background: #0d1117;
+            border-radius: 8px;
+            border: 1px solid #21262d;
+        }
+
+        .entry-text {
+            font-size: 15px;
+            line-height: 1.4;
+            word-break: break-word;
+        }
+
+        .delete-btn {
+            flex-shrink: 0;
+            border: none;
+            background: transparent;
+            color: #ff6b6b;
+            font-size: 16px;
+            cursor: pointer;
+            padding: 4px 5px;
+            border-radius: 5px;
+        }
+
+        .delete-btn:hover {
+            background: #2d1616;
+        }
+
+        .empty {
+            text-align: center;
+            color: #6e7681;
+            padding: 30px 10px;
+            font-size: 14px;
+        }
+
+        .total {
+            padding: 18px 15px;
+            border-top: 1px solid #30363d;
+            text-align: center;
+            font-size: 19px;
+            font-weight: bold;
+        }
+
+        /* BUTTON */
+
+        .main-actions {
+            display: flex;
+            justify-content: center;
+            margin-top: 30px;
+        }
+
+        .primary-btn {
+            border: none;
+            border-radius: 9px;
+            background: #ffffff;
+            color: #0d1117;
+            padding: 15px 28px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            letter-spacing: 0.5px;
+        }
+
+        .primary-btn:hover {
+            opacity: 0.85;
+        }
+
+        /* FORM */
+
+        .form-section {
+            max-width: 650px;
+            margin: 55px auto 0;
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 14px;
+            padding: 30px;
+            display: none;
+        }
+
+        .form-section.visible {
+            display: block;
+        }
+
+        .form-title {
+            text-align: center;
+            font-size: 25px;
+            margin-bottom: 25px;
+            letter-spacing: 1px;
+        }
+
+        .form-group {
+            margin-bottom: 22px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 9px;
+            font-size: 15px;
+            font-weight: bold;
+        }
+
+        input[type="text"],
+        select {
+            width: 100%;
+            padding: 13px;
+            border-radius: 8px;
+            border: 1px solid #30363d;
+            background: #0d1117;
+            color: white;
+            font-size: 15px;
+            outline: none;
+        }
+
+        input[type="text"]:focus,
+        select:focus {
+            border-color: #8b949e;
+        }
+
+        /* TIME OPTIONS */
+
+        .time-options {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+
+        .time-option input {
+            display: none;
+        }
+
+        .time-option span {
+            display: block;
+            text-align: center;
+            padding: 13px 8px;
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            cursor: pointer;
+            background: #0d1117;
+            font-size: 14px;
+            transition: 0.2s;
+        }
+
+        .time-option span:hover {
+            border-color: #8b949e;
+        }
+
+        .time-option input:checked + span {
+            background: #ffffff;
+            color: #0d1117;
+            border-color: #ffffff;
+            font-weight: bold;
+        }
+
+        /* CHECKBOX */
+
+        .checkbox-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .checkbox-wrapper input {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        .checkbox-wrapper span {
+            font-size: 15px;
+        }
+
+        .form-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 28px;
+        }
+
+        .form-buttons button {
+            flex: 1;
+        }
+
+        .secondary-btn {
+            border: 1px solid #30363d;
+            border-radius: 9px;
+            background: transparent;
+            color: #ffffff;
+            padding: 14px;
+            font-size: 15px;
+            cursor: pointer;
+        }
+
+        .secondary-btn:hover {
+            background: #21262d;
+        }
+
+        /* MESSAGE */
+
+        .message {
+            text-align: center;
+            margin-top: 15px;
+            min-height: 20px;
+            font-size: 14px;
+        }
+
+        .success {
+            color: #7ee787;
+        }
+
+        .error {
+            color: #ff7b72;
+        }
+
+        /* MOBILE */
+
+        @media (max-width: 800px) {
+            .schedule {
+                grid-template-columns: 1fr;
+            }
+
+            .column {
+                min-height: auto;
+            }
+
+            .time-options {
+                grid-template-columns: 1fr;
+            }
+
+            .form-section {
+                padding: 22px;
+            }
+
+            .container {
+                padding-top: 25px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <!-- HEADER -->
+
+    <header>
+        <h1>CHAIN SCHEDULE</h1>
+
+        <div class="date" id="date"></div>
+        <div class="clock" id="clock"></div>
+    </header>
+
+
+    <!-- SCHEDULE -->
+
+    <section class="schedule">
+
+        <!-- 12:00 -->
+
+        <div class="column">
+            <div class="column-header">
+                12:00 TCT
+            </div>
+
+            <div class="entries" id="entries-12">
+                <div class="empty">No participants yet</div>
+            </div>
+
+            <div class="total" id="total-12">
+                Total Hits: 0
+            </div>
+        </div>
+
+
+        <!-- 17:00 -->
+
+        <div class="column">
+            <div class="column-header">
+                17:00 TCT
+            </div>
+
+            <div class="entries" id="entries-17">
+                <div class="empty">No participants yet</div>
+            </div>
+
+            <div class="total" id="total-17">
+                Total Hits: 0
+            </div>
+        </div>
+
+
+        <!-- 00:00 -->
+
+        <div class="column">
+            <div class="column-header">
+                00:00 TCT
+            </div>
+
+            <div class="entries" id="entries-00">
+                <div class="empty">No participants yet</div>
+            </div>
+
+            <div class="total" id="total-00">
+                Total Hits: 0
+            </div>
+        </div>
+
+    </section>
+
+
+    <!-- VERIFY BUTTON -->
+
+    <div class="main-actions">
+        <button
+            class="primary-btn"
+            id="showFormBtn"
+            onclick="showForm()"
+        >
+            VERIFY PARTICIPATION
+        </button>
+    </div>
+
+
+    <!-- FORM -->
+
+    <section class="form-section" id="formSection">
+
+        <div class="form-title">
+            VERIFY PARTICIPATION
+        </div>
+
+        <form id="participationForm">
+
+            <!-- TIME -->
+
+            <div class="form-group">
+
+                <label>Choose time</label>
+
+                <div class="time-options">
+
+                    <label class="time-option">
+                        <input
+                            type="radio"
+                            name="time"
+                            value="12"
+                            required
+                        >
+                        <span>12:00 TCT</span>
+                    </label>
+
+                    <label class="time-option">
+                        <input
+                            type="radio"
+                            name="time"
+                            value="17"
+                        >
+                        <span>17:00 TCT</span>
+                    </label>
+
+                    <label class="time-option">
+                        <input
+                            type="radio"
+                            name="time"
+                            value="00"
+                        >
+                        <span>00:00 TCT</span>
+                    </label>
+
+                </div>
+
+            </div>
+
+
+            <!-- NICKNAME -->
+
+            <div class="form-group">
+
+                <label for="nickname">
+                    Nickname
+                </label>
+
+                <input
+                    type="text"
+                    id="nickname"
+                    maxlength="30"
+                    placeholder="Enter your nickname"
+                    required
+                >
+
+            </div>
+
+
+            <!-- QUANTITY -->
+
+            <div class="form-group">
+
+                <label for="quantity">
+                    Quantity
+                </label>
+
+                <select id="quantity" required>
+
+                    <option value="">Select quantity</option>
+
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+
+                </select>
+
+            </div>
+
+
+            <!-- CHECKBOX -->
+
+            <div class="form-group">
+
+                <label class="checkbox-wrapper">
+
+                    <input
+                        type="checkbox"
+                        id="canTakeIt"
+                    >
+
+                    <span>Can take it</span>
+
+                </label>
+
+            </div>
+
+
+            <!-- BUTTONS -->
+
+            <div class="form-buttons">
+
+                <button
+                    type="submit"
+                    class="primary-btn"
+                >
+                    SUBMIT
+                </button>
+
+                <button
+                    type="button"
+                    class="secondary-btn"
+                    onclick="hideForm()"
+                >
+                    BACK TO STATISTICS
+                </button>
+
+            </div>
+
+            <div
+                class="message"
+                id="message"
+            ></div>
+
+        </form>
+
+    </section>
+
+</div>
+
+
+<script>
+
+    /* ==========================================
+       DATE & CLOCK — TCT / GREENWICH
+       ========================================== */
+
+    function updateClock() {
+
+        const now = new Date();
+
+        const dateOptions = {
+            timeZone: "Etc/GMT",
+            weekday: "long",
+            day: "numeric",
+            month: "long",
+            year: "numeric"
+        };
+
+        const timeOptions = {
+            timeZone: "Etc/GMT",
+            hour: "2-digit",
+            minute: "2-digit",
+            second: "2-digit",
+            hour12: false
+        };
+
+        const dateText = new Intl.DateTimeFormat(
+            "en-GB",
+            dateOptions
+        ).format(now);
+
+        const timeText = new Intl.DateTimeFormat(
+            "en-GB",
+            timeOptions
+        ).format(now);
+
+        document.getElementById("date").textContent =
+            dateText;
+
+        document.getElementById("clock").textContent =
+            timeText + " TCT";
+    }
+
+    updateClock();
+
+    setInterval(updateClock, 1000);
+
+
+    /* ==========================================
+       DATA
+       ========================================== */
+
+    let participants =
+        JSON.parse(
+            localStorage.getItem("chainSchedule")
+        ) || [];
+
+
+    /* ==========================================
+       SHOW / HIDE FORM
+       ========================================== */
+
+    function showForm() {
+
+        const form = document.getElementById("formSection");
+
+        form.classList.add("visible");
+
+        form.scrollIntoView({
+            behavior: "smooth",
+            block: "start"
+        });
+
+    }
+
+
+    function hideForm() {
+
+        const form = document.getElementById("formSection");
+
+        form.classList.remove("visible");
+
+        window.scrollTo({
+            top: 0,
+            behavior: "smooth"
+        });
+
+    }
+
+
+    /* ==========================================
+       SAVE DATA
+       ========================================== */
+
+    function saveParticipants() {
+
+        localStorage.setItem(
+            "chainSchedule",
+            JSON.stringify(participants)
+        );
+
+    }
+
+
+    /* ==========================================
+       ADD PARTICIPANT
+       ========================================== */
+
+    document
+        .getElementById("participationForm")
+        .addEventListener("submit", function(event) {
+
+            event.preventDefault();
+
+            const selectedTime =
+                document.querySelector(
+                    'input[name="time"]:checked'
+                );
+
+            const nickname =
+                document.getElementById(
+                    "nickname"
+                ).value.trim();
+
+            const quantity =
+                Number(
+                    document.getElementById(
+                        "quantity"
+                    ).value
+                );
+
+            const canTakeIt =
+                document.getElementById(
+                    "canTakeIt"
+                ).checked;
+
+            const message =
+                document.getElementById(
+                    "message"
+                );
+
+
+            /* VALIDATION */
+
+            if (!selectedTime) {
+
+                showError(
+                    "Please choose a time."
+                );
+
+                return;
+            }
+
+
+            if (!nickname) {
+
+                showError(
+                    "Please enter your nickname."
+                );
+
+                return;
+            }
+
+
+            if (
+                !Number.isInteger(quantity) ||
+                quantity < 1 ||
+                quantity > 6
+            ) {
+
+                showError(
+                    "Quantity must be between 1 and 6."
+                );
+
+                return;
+            }
+
+
+            /* CREATE RECORD */
+
+            const participant = {
+
+                id: Date.now(),
+
+                time: selectedTime.value,
+
+                nickname: nickname,
+
+                quantity: quantity,
+
+                canTakeIt: canTakeIt
+
+            };
+
+
+            participants.push(participant);
+
+            saveParticipants();
+
+            renderSchedule();
+
+
+            /* RESET FORM */
+
+            document
+                .getElementById(
+                    "participationForm"
+                )
+                .reset();
+
+
+            showSuccess(
+                "Participation verified successfully!"
+            );
+
+
+            /* RETURN TO STATISTICS */
+
+            setTimeout(function() {
+
+                hideForm();
+
+                message.textContent = "";
+
+            }, 900);
+
+        });
+
+
+    /* ==========================================
+       RENDER SCHEDULE
+       ========================================== */
+
+    function renderSchedule() {
+
+        const columns = {
+            "12": document.getElementById(
+                "entries-12"
+            ),
+
+            "17": document.getElementById(
+                "entries-17"
+            ),
+
+            "00": document.getElementById(
+                "entries-00"
+            )
+        };
+
+
+        const totals = {
+            "12": document.getElementById(
+                "total-12"
+            ),
+
+            "17": document.getElementById(
+                "total-17"
+            ),
+
+            "00": document.getElementById(
+                "total-00"
+            )
+        };
+
+
+        /* CLEAR COLUMNS */
+
+        Object.values(columns).forEach(
+            column => {
+                column.innerHTML = "";
+            }
+        );
+
+
+        const totalHits = {
+            "12": 0,
+            "17": 0,
+            "00": 0
+        };
+
+
+        /* ADD ENTRIES */
+
+        participants.forEach(
+            participant => {
+
+                const column =
+                    columns[participant.time];
+
+                if (!column) {
+                    return;
+                }
+
+
+                /* CALCULATE TOTAL */
+
+                totalHits[
+                    participant.time
+                ] += participant.quantity;
+
+
+                if (participant.canTakeIt) {
+
+                    totalHits[
+                        participant.time
+                    ] += 10;
+
+                }
+
+
+                /* ENTRY */
+
+                const entry =
+                    document.createElement("div");
+
+                entry.className = "entry";
+
+
+                /* DELETE BUTTON */
+
+                const deleteButton =
+                    document.createElement("button");
+
+                deleteButton.className =
+                    "delete-btn";
+
+                deleteButton.textContent = "🗑";
+
+                deleteButton.title =
+                    "Delete entry";
+
+                deleteButton.onclick =
+                    function() {
+
+                        deleteParticipant(
+                            participant.id
+                        );
+
+                    };
+
+
+                /* TEXT */
+
+                const text =
+                    document.createElement("div");
+
+                text.className =
+                    "entry-text";
+
+
+                if (participant.canTakeIt) {
+
+                    text.textContent =
+                        participant.nickname +
+                        " — CAN TAKE IT — " +
+                        participant.quantity;
+
+                } else {
+
+                    text.textContent =
+                        participant.nickname +
+                        " — " +
+                        participant.quantity;
+
+                }
+
+
+                entry.appendChild(
+                    deleteButton
+                );
+
+                entry.appendChild(
+                    text
+                );
+
+                column.appendChild(
+                    entry
+                );
+
+            }
+        );
+
+
+        /* EMPTY MESSAGE */
+
+        Object.keys(columns).forEach(
+            time => {
+
+                if (
+                    columns[time]
+                        .children.length === 0
+                ) {
+
+                    const empty =
+                        document.createElement("div");
+
+                    empty.className =
+                        "empty";
+
+                    empty.textContent =
+                        "No participants yet";
+
+                    columns[time].appendChild(
+                        empty
+                    );
+
+                }
+
+            }
+        );
+
+
+        /* TOTALS */
+
+        Object.keys(totals).forEach(
+            time => {
+
+                totals[time].textContent =
+                    "Total Hits: " +
+                    totalHits[time];
+
+            }
+        );
+
+    }
+
+
+    /* ==========================================
+       DELETE PARTICIPANT
+       ========================================== */
+
+    function deleteParticipant(id) {
+
+        const confirmed =
+            confirm(
+                "Delete this participation?"
+            );
+
+        if (!confirmed) {
+            return;
+        }
+
+
+        participants =
+            participants.filter(
+                participant =>
+                    participant.id !== id
+            );
+
+
+        saveParticipants();
+
+        renderSchedule();
+
+    }
+
+
+    /* ==========================================
+       MESSAGES
+       ========================================== */
+
+    function showError(text) {
+
+        const message =
+            document.getElementById(
+                "message"
+            );
+
+        message.className =
+            "message error";
+
+        message.textContent = text;
+
+    }
+
+
+    function showSuccess(text) {
+
+        const message =
+            document.getElementById(
+                "message"
+            );
+
+        message.className =
+            "message success";
+
+        message.textContent = text;
+
+    }
+
+
+    /* ==========================================
+       INITIAL RENDER
+       ========================================== */
+
+    renderSchedule();
+
+</script>
+
+</body>
+</html>
