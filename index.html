@@ -1092,10 +1092,15 @@
                     "entry-text";
 
 
+                const displayQuantity =
+                    participant.can_refill
+                        ? participant.quantity / 2
+                        : participant.quantity;
+
                 text.textContent =
                     participant.nickname +
                     " — " +
-                    participant.quantity;
+                    displayQuantity;
 
                 if (participant.can_take_it) {
                     text.textContent +=
