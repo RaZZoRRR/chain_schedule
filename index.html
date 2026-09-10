@@ -660,7 +660,7 @@
             </div>
 
 
-            <!-- CHECKBOX -->
+            <!-- CAN XAN -->
 
             <div class="form-group">
 
@@ -673,6 +673,26 @@
 
                     <span>
                         Can xan
+                    </span>
+
+                </label>
+
+            </div>
+
+
+            <!-- CAN REFILL -->
+
+            <div class="form-group">
+
+                <label class="checkbox-wrapper">
+
+                    <input
+                        type="checkbox"
+                        id="canRefill"
+                    >
+
+                    <span>
+                        Can refill
                     </span>
 
                 </label>
@@ -1072,22 +1092,19 @@
                     "entry-text";
 
 
-                if (
-                    participant.can_take_it
-                ) {
+                text.textContent =
+                    participant.nickname +
+                    " — " +
+                    participant.quantity;
 
-                    text.textContent =
-                        participant.nickname +
-                        " — Can Xan — " +
-                        participant.quantity;
+                if (participant.can_take_it) {
+                    text.textContent +=
+                        " — Can Xan";
+                }
 
-                } else {
-
-                    text.textContent =
-                        participant.nickname +
-                        " — " +
-                        participant.quantity;
-
+                if (participant.can_refill) {
+                    text.textContent +=
+                        " + Refill";
                 }
 
 
@@ -1207,6 +1224,11 @@
                         "canTakeIt"
                     ).checked;
 
+                const canRefill =
+                    document.getElementById(
+                        "canRefill"
+                    ).checked;
+
 
                 /* VALIDATION */
 
@@ -1275,10 +1297,15 @@
                             nickname,
 
                         quantity:
-                            quantity,
+                            canRefill
+                                ? quantity * 2
+                                : quantity,
 
                         can_take_it:
-                            canTakeIt
+                            canTakeIt,
+
+                        can_refill:
+                            canRefill
 
                     })
 
